@@ -65,7 +65,7 @@ app.delete('/api/words/:id', (req, res) => {
   });
 });
 
-app.use(express.static('public'));
+app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
