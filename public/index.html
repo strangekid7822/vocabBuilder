@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">New Word</a>
+            <a href="flashcard-game.html">Flashcard Game</a>
+            <a href="word-list.html" class="hide-on-mobile">Word List</a>
+        </nav>
+        <form id="word-form">
+            <label for="word">Word:</label>
+            <input type="text" id="word" name="word" required>
+            
+            <label for="meaning">Meaning (optional):</label>
+            <input type="text" id="meaning" name="meaning">
+            
+            <label for="synonyms">Synonyms (optional, comma-separated):</label>
+            <input type="text" id="synonyms" name="synonyms">
+            
+            <label for="chinese-translation">Chinese Translation (optional):</label>
+            <input type="text" id="chinese-translation" name="chinese-translation">
+            
+            <button type="submit">Add Word</button>
+        </form>
+    </div>    
+    <script src="app.js"></script>
+</body>
+</html>
