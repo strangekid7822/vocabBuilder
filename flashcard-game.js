@@ -1,25 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
   fetchWords().then(words => {
-    if (words.length > 0) {
+    if (words.length > 2) {
+      document.getElementById('not-enough-words-message').style.display = 'none';
       startNewRound(words);
+
+      document.getElementById('options').addEventListener('click', event => {
+        if (event.target.classList.contains('option')) {
+          handleOptionClick(event.target);
+        }
+      });
+
+      const actionButton = document.getElementById('action-button');
+      actionButton.addEventListener('click', () => {
+        if (actionButton.textContent === 'Submit') {
+          handleSubmission(words);
+        } else {
+          startNewRound(words);
+        }
+      });
+
     } else {
-      alert('Please add some words to the word list before playing the game.');
+      document.getElementById('not-enough-words-message').style.display = 'block';
+      document.getElementById('question').style.display = 'none';
+      document.getElementById('options').style.display = 'none';
+      document.getElementById('action-button').style.display = 'none';
     }
-
-    document.getElementById('options').addEventListener('click', event => {
-      if (event.target.classList.contains('option')) {
-        handleOptionClick(event.target);
-      }
-    });
-
-    const actionButton = document.getElementById('action-button');
-    actionButton.addEventListener('click', () => {
-      if (actionButton.textContent === 'Submit') {
-        handleSubmission(words);
-      } else {
-        startNewRound(words);
-      }
-    });
   });
 });
 
