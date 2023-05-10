@@ -68,6 +68,6 @@ app.delete('/api/words/:id', (req, res) => {
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(3000, '0.0.0.0', () => {
+  console.log('Server is running on port 3000');
 });
