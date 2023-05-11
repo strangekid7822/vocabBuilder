@@ -69,25 +69,41 @@ function getRandomElement(array) {
 
 function generateCorrectOption(word) {
   const optionTypes = ['meaning', 'synonyms', 'chinese_translation'];
-  const optionType = getRandomElement(optionTypes);
-  return { type: optionType, text: word[optionType] };
+  let optionType = getRandomElement(optionTypes);
+  let text = word[optionType];
+
+  // Make sure the option is not empty
+  while (!text || text.length === 0) {
+    optionType = getRandomElement(optionTypes);
+    text = word[optionType];
+  }
+
+  return { type: optionType, text: text };
 }
 
 function generateOtherOptions(words, correctOption) {
   const otherWords = words.filter(word => word[correctOption.type] !== correctOption.text);
   let otherOptions = [];
 
-  while (otherOptions.length < 2) {
+  while (otherOptions.length < 2 && otherWords.length > 0) {
     const otherWord = getRandomElement(otherWords);
-    const option = otherWord[correctOption.type];
+    let option = otherWord[correctOption.type];
 
-    if (option && !otherOptions.some(o => o.text === option)) {
+    // Make sure the option is not empty and not already in the options
+    if (option && option.length > 0 && !otherOptions.some(o => o.text === option)) {
       otherOptions.push({ type: correctOption.type, text: option });
+    }
+
+    // Remove the used word from the otherWords array to prevent endless loop when words are less than required
+    const index = otherWords.indexOf(otherWord);
+    if (index > -1) {
+      otherWords.splice(index, 1);
     }
   }
 
   return otherOptions;
 }
+
 
 function displayQuestion(word) {
   document.getElementById('question').textContent = word.word;

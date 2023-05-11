@@ -14,6 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
       synonyms: document.getElementById('synonyms').value,
       chinese_translation: document.getElementById('chinese-translation').value,
     };
+
+    // Check if the word is empty
+    if (!wordData.word || wordData.word.trim() === '') {
+      alert('The word must not be empty.');
+      return;
+    }
+
+    // Check if at least one of the fields: 'Meaning', 'Synonyms', 'Chinese translation' is not empty
+    if (!wordData.meaning && !wordData.synonyms && !wordData.chinese_translation) {
+      alert('At least one of the fields: "Meaning", "Synonyms", or "Chinese translation" must not be empty.');
+      return;
+    }
   
     // Check if the word already exists
     try {
@@ -75,15 +87,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   
-  function displayWords(words) {
-    const wordListElement = document.getElementById('word-list');
-  
-    // Clear any existing content
-    wordListElement.innerHTML = '';
-  
+function displayWords(words) {
+  const wordListElement = document.getElementById('word-list');
+
+  // Clear any existing content
+  wordListElement.innerHTML = '';
+
+  // Check if the words array is empty
+  if (words.length === 0) {
+    // If it is, display a motivational message
+    const message = document.createElement('p');
+    message.innerHTML = 'Looking to expand your vocabulary? <br>Get started by adding some words!';
+    message.style.fontSize = '21px';
+    message.style.fontWeight = '20px';
+    message.style.textAlign = 'center';
+    wordListElement.appendChild(message);
+  } else {
     // Create a table to display the words
     const table = document.createElement('table');
-  
+
     // Add table header
     const header = document.createElement('tr');
     header.innerHTML = `
@@ -95,26 +117,26 @@ document.addEventListener('DOMContentLoaded', () => {
       <th>Delete</th>
     `;
     table.appendChild(header);
-  
+
     words.forEach(word => {
       const row = document.createElement('tr');
-  
+
       const wordCell = document.createElement('td');
       wordCell.textContent = word.word;
       row.appendChild(wordCell);
-  
+
       const meaningCell = document.createElement('td');
       meaningCell.textContent = word.meaning || '';
       row.appendChild(meaningCell);
-  
+
       const synonymsCell = document.createElement('td');
       synonymsCell.textContent = word.synonyms || '';
       row.appendChild(synonymsCell);
-  
+
       const chineseTranslationCell = document.createElement('td');
       chineseTranslationCell.textContent = word.chinese_translation || '';
       row.appendChild(chineseTranslationCell);
-  
+
       // Edit button cell
       const editCell = document.createElement('td');
       const editButton = document.createElement('button');
@@ -122,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       editButton.onclick = () => toggleEditMode(row, word.id);
       editCell.appendChild(editButton);
       row.appendChild(editCell);
-  
+
       // Delete button cell
       const deleteCell = document.createElement('td');
       const deleteButton = document.createElement('button');
@@ -130,12 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteButton.onclick = () => deleteWord(word.id, row);
       deleteCell.appendChild(deleteButton);
       row.appendChild(deleteCell);
-  
+
       table.appendChild(row);
     });
-  
+
     wordListElement.appendChild(table);
   }
+}
+  
   
   function toggleEditMode(row, wordId) {
     const isEditing = row.classList.toggle('editing');
