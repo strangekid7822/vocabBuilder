@@ -8,15 +8,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const db = new sqlite3.Database(':memory:', (err) => {
+const db = new sqlite3.Database('./words.db', (err) => {
   if (err) {
     console.error(err.message);
   }
-  console.log('Connected to the in-memory SQLite database.');
+  console.log('Connected to the SQLite database.');
 });
 
 db.serialize(() => {
-  db.run('CREATE TABLE words (id INTEGER PRIMARY KEY, word TEXT NOT NULL, meaning TEXT, synonyms TEXT, chinese_translation TEXT);');
+  db.run('CREATE TABLE IF NOT EXISTS words (id INTEGER PRIMARY KEY, word TEXT NOT NULL, meaning TEXT, synonyms TEXT, chinese_translation TEXT);');
 });
 
 app.post('/api/words', (req, res) => {
@@ -31,7 +31,7 @@ app.post('/api/words', (req, res) => {
 });
 
 app.get('/api/words', (req, res) => {
-  db.all('SELECT * FROM words', [], (err, rows) => {
+  db.all('SELECT * FROM words ORDER BY word ASC', [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
