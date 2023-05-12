@@ -1,92 +1,89 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const wordForm = document.getElementById('word-form');
-    if (wordForm) {
-      wordForm.addEventListener('submit', addWord);
-    }
-  });
-  
-  async function addWord(event) {
-    event.preventDefault();
-  
-    const wordData = {
-      word: document.getElementById('word').value,
-      meaning: document.getElementById('meaning').value,
-      synonyms: document.getElementById('synonyms').value,
-      chinese_translation: document.getElementById('chinese-translation').value,
-    };
+  const wordForm = document.getElementById('word-form');
+  if (wordForm) {
+    wordForm.addEventListener('submit', addWord);
+  }
+});
 
-    // Check if the word is empty
-    if (!wordData.word || wordData.word.trim() === '') {
-      alert('The word must not be empty.');
+async function addWord(event) {
+  event.preventDefault();
+
+  const wordData = {
+    word: document.getElementById('word').value,
+    meaning: document.getElementById('meaning').value,
+    synonyms: document.getElementById('synonyms').value,
+    chinese_translation: document.getElementById('chinese-translation').value,
+  };
+
+  // Check if the word is empty
+  if (!wordData.word || wordData.word.trim() === '') {
+    alert('The word must not be empty.');
+    return;
+  }
+
+  // Check if at least one of the fields: 'Meaning', 'Synonyms', 'Chinese translation' is not empty
+  if (!wordData.meaning && !wordData.synonyms && !wordData.chinese_translation) {
+    alert('At least one of the fields: "Meaning", "Synonyms", or "Chinese translation" must not be empty.');
+    return;
+  }
+
+  // Check if the word already exists
+  try {
+    const wordsResponse = await fetch('/api/words');
+    if (!wordsResponse.ok) {
+      throw new Error(`HTTP error: ${wordsResponse.status}`);
+    }
+    const words = await wordsResponse.json();
+    const existingWord = words.find(word => word.word.toLowerCase() === wordData.word.toLowerCase());
+
+    if (existingWord) {
+      alert('The word already exists in the list.');
       return;
     }
+  } catch (error) {
+    console.error('Failed to check for duplicate words:', error);
+  }
 
-    // Check if at least one of the fields: 'Meaning', 'Synonyms', 'Chinese translation' is not empty
-    if (!wordData.meaning && !wordData.synonyms && !wordData.chinese_translation) {
-      alert('At least one of the fields: "Meaning", "Synonyms", or "Chinese translation" must not be empty.');
-      return;
+  try {
+    const response = await fetch('/api/words', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(wordData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
-  
-    // Check if the word already exists
-    try {
-      const wordsResponse = await fetch('/api/words');
-      if (!wordsResponse.ok) {
-        throw new Error(`HTTP error: ${wordsResponse.status}`);
-      }
-      const words = await wordsResponse.json();
-      const existingWord = words.find(word => word.word.toLowerCase() === wordData.word.toLowerCase());
-  
-      if (existingWord) {
-        alert('The word already exists in the list.');
-        return;
-      }
-    } catch (error) {
-      console.error('Failed to check for duplicate words:', error);
-    }
-  
-    try {
-      const response = await fetch('/api/words', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(wordData),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
-  
-      const result = await response.json();
-      console.log('Word added with ID:', result.id);
-      
-      // Clear input fields
-      document.getElementById('word').value = '';
-      document.getElementById('meaning').value = '';
-      document.getElementById('synonyms').value = '';
-      document.getElementById('chinese-translation').value = '';
-  
-    } catch (error) {
-      console.error('Failed to add word:', error);
-    }
+
+    const result = await response.json();
+    console.log('Word added with ID:', result.id);
+    
+    // Clear input fields
+    document.getElementById('word').value = '';
+    document.getElementById('meaning').value = '';
+    document.getElementById('synonyms').value = '';
+    document.getElementById('chinese-translation').value = '';
+
+  } catch (error) {
+    console.error('Failed to add word:', error);
   }
-  
-  
-  
-  async function fetchWords() {
-    try {
-      const response = await fetch('/api/words');
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
-      const words = await response.json();
-      displayWords(words);
-    } catch (error) {
-      console.error('Failed to fetch words:', error);
+}
+
+async function fetchWords() {
+  try {
+    const response = await fetch('/api/words');
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
+    const words = await response.json();
+    displayWords(words);
+  } catch (error) {
+    console.error('Failed to fetch words:', error);
   }
-  
-  
+}
+
 function displayWords(words) {
   const wordListElement = document.getElementById('word-list');
 
@@ -123,18 +120,22 @@ function displayWords(words) {
 
       const wordCell = document.createElement('td');
       wordCell.textContent = word.word;
+      wordCell.classList.add('info-cell'); // Add class
       row.appendChild(wordCell);
 
       const meaningCell = document.createElement('td');
       meaningCell.textContent = word.meaning || '';
+      meaningCell.classList.add('info-cell'); // Add class
       row.appendChild(meaningCell);
 
       const synonymsCell = document.createElement('td');
       synonymsCell.textContent = word.synonyms || '';
+      synonymsCell.classList.add('info-cell'); // Add class
       row.appendChild(synonymsCell);
 
       const chineseTranslationCell = document.createElement('td');
       chineseTranslationCell.textContent = word.chinese_translation || '';
+      chineseTranslationCell.classList.add('info-cell'); // Add class
       row.appendChild(chineseTranslationCell);
 
       // Edit button cell
@@ -149,6 +150,7 @@ function displayWords(words) {
       const deleteCell = document.createElement('td');
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete-button'; // Add a specific class to the delete button
       deleteButton.onclick = () => deleteWord(word.id, row);
       deleteCell.appendChild(deleteButton);
       row.appendChild(deleteCell);
@@ -159,89 +161,91 @@ function displayWords(words) {
     wordListElement.appendChild(table);
   }
 }
-  
-  
-  function toggleEditMode(row, wordId) {
-    const isEditing = row.classList.toggle('editing');
-  
-    const cells = row.querySelectorAll('td');
-    const wordCell = cells[0];
-    const meaningCell = cells[1];
-    const synonymsCell = cells[2];
-    const chineseTranslationCell = cells[3];
-    const editButton = cells[4].querySelector('button');
-  
-    if (isEditing) {
-      makeCellEditable(wordCell);
-      makeCellEditable(meaningCell);
-      makeCellEditable(synonymsCell);
-      makeCellEditable(chineseTranslationCell);
-      editButton.textContent = 'Save';
-    } else {
-      makeCellReadonly(wordCell);
-      makeCellReadonly(meaningCell);
-      makeCellReadonly(synonymsCell);
-      makeCellReadonly(chineseTranslationCell);
-      editButton.textContent = 'Edit';
-  
-      const updatedWord = {
-        word: wordCell.textContent,
-        meaning: meaningCell.textContent,
-        synonyms: synonymsCell.textContent,
-        chinese_translation: chineseTranslationCell.textContent,
-      };
-      updateWord(wordId, updatedWord);
+
+function toggleEditMode(row, wordId) {
+  const isEditing = row.classList.toggle('editing');
+
+  const cells = row.querySelectorAll('td');
+  const wordCell = cells[0];
+  const meaningCell = cells[1];
+  const synonymsCell = cells[2];
+  const chineseTranslationCell = cells[3];
+  const editButton = cells[4].querySelector('button');
+
+  if (isEditing) {
+    makeCellEditable(wordCell);
+    makeCellEditable(meaningCell);
+    makeCellEditable(synonymsCell);
+    makeCellEditable(chineseTranslationCell);
+    editButton.textContent = 'Save';
+    editButton.classList.add('edit-mode'); // Add the 'edit-mode' class
+  } else {
+    makeCellReadonly(wordCell);
+    makeCellReadonly(meaningCell);
+    makeCellReadonly(synonymsCell);
+    makeCellReadonly(chineseTranslationCell);
+    editButton.textContent = 'Edit';
+    editButton.classList.remove('edit-mode'); // Remove the 'edit-mode' class
+
+    const updatedWord = {
+      word: wordCell.textContent,
+      meaning: meaningCell.textContent,
+      synonyms: synonymsCell.textContent,
+      chinese_translation: chineseTranslationCell.textContent,
+    };
+    updateWord(wordId, updatedWord);
+  }
+}
+
+function makeCellEditable(cell) {
+  cell.setAttribute('contenteditable', 'true');
+  cell.classList.add('editing');
+}
+
+function makeCellReadonly(cell) {
+  cell.removeAttribute('contenteditable');
+  cell.classList.remove('editing');
+}
+
+async function updateWord(wordId, updatedWord) {
+  try {
+    const response = await fetch(`/api/words/${wordId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedWord),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
+
+    console.log('Word updated with ID:', wordId);
+  } catch (error) {
+    console.error('Failed to update word:', error);
   }
-  
-  function makeCellEditable(cell) {
-    cell.setAttribute('contenteditable', 'true');
+}
+
+async function deleteWord(wordId, row) {
+  const confirmation = confirm('Are you sure you want to delete this word?');
+
+  if (!confirmation) {
+    return;
   }
-  
-  function makeCellReadonly(cell) {
-    cell.removeAttribute('contenteditable');
-  }
-  
-  async function updateWord(wordId, updatedWord) {
-    try {
-      const response = await fetch(`/api/words/${wordId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedWord),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
-  
-      console.log('Word updated with ID:', wordId);
-    } catch (error) {
-      console.error('Failed to update word:', error);
+
+  try {
+    const response = await fetch(`/api/words/${wordId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
+
+    console.log('Word deleted with ID:', wordId);
+    row.remove(); // Remove the row from the table
+  } catch (error) {
+    console.error('Failed to delete word:', error);
   }
-  
-  async function deleteWord(wordId, row) {
-    const confirmation = confirm('Are you sure you want to delete this word?');
-  
-    if (!confirmation) {
-      return;
-    }
-  
-    try {
-      const response = await fetch(`/api/words/${wordId}`, {
-        method: 'DELETE',
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
-  
-      console.log('Word deleted with ID:', wordId);
-      row.remove(); // Remove the row from the table
-    } catch (error) {
-      console.error('Failed to delete word:', error);
-    }
-  }
-  
+}

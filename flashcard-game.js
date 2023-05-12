@@ -1,6 +1,9 @@
+let lastNQuestionWords = [];
+const N = 3; // Change this to the number of rounds you want to remember.
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchWords().then(words => {
-    if (words.length > 2) {
+    if (words.length > 5) {
       document.getElementById('not-enough-words-message').style.display = 'none';
       startNewRound(words);
 
@@ -45,6 +48,7 @@ function startNewRound(words) {
   const actionButton = document.getElementById('action-button');
   actionButton.textContent = 'Submit';
   actionButton.classList.add('disabled');
+  actionButton.classList.remove('next');
   
   const [questionWord, correctOption, otherOptions] = generateQuestion(words);
   displayQuestion(questionWord);
@@ -57,9 +61,27 @@ function startNewRound(words) {
 }
 
 function generateQuestion(words) {
-  const questionWord = getRandomElement(words);
+  // Exclude the last N question words when selecting a new one.
+  const availableWords = words.filter(word => !lastNQuestionWords.includes(word));
+
+  // Choose one random word to be the question word.
+  const questionWord = getRandomElement(availableWords);
+
+  // Update the list of the last N question words.
+  lastNQuestionWords.push(questionWord);
+  if (lastNQuestionWords.length > N) {
+    lastNQuestionWords.shift();  // Remove the oldest word if the list is longer than N.
+  }
+
+  // Generate the correct option for that word.
   const correctOption = generateCorrectOption(questionWord);
-  const otherOptions = generateOtherOptions(words, correctOption);
+
+  // Remove the chosen word from the word list.
+  const remainingWords = availableWords.filter(word => word !== questionWord);
+
+  // Generate the rest of the options from the remaining words.
+  const otherOptions = generateOtherOptions(remainingWords, correctOption);
+
   return [questionWord, correctOption, otherOptions];
 }
 
@@ -82,28 +104,33 @@ function generateCorrectOption(word) {
 }
 
 function generateOtherOptions(words, correctOption) {
-  const otherWords = words.filter(word => word[correctOption.type] !== correctOption.text);
   let otherOptions = [];
+  const optionTypes = ['meaning', 'synonyms', 'chinese_translation'];
 
-  while (otherOptions.length < 2 && otherWords.length > 0) {
-    const otherWord = getRandomElement(otherWords);
-    let option = otherWord[correctOption.type];
+  while (otherOptions.length < 2 && words.length > 0) {
+    const otherWord = getRandomElement(words);
+    let optionType = getRandomElement(optionTypes);
+    let option = otherWord[optionType];
 
-    // Make sure the option is not empty and not already in the options
-    if (option && option.length > 0 && !otherOptions.some(o => o.text === option)) {
-      otherOptions.push({ type: correctOption.type, text: option });
+    // Make sure the option is not empty and not the same as the correct option
+    while ((!option || option.length === 0 || option === correctOption.text) && optionTypes.length > 0) {
+      optionType = getRandomElement(optionTypes);
+      option = otherWord[optionType];
     }
 
-    // Remove the used word from the otherWords array to prevent endless loop when words are less than required
-    const index = otherWords.indexOf(otherWord);
-    if (index > -1) {
-      otherWords.splice(index, 1);
+    if (option && option.length > 0 && option !== correctOption.text) {
+      otherOptions.push({ type: optionType, text: option });
+
+      // Remove the used word from the words array to prevent selecting the same word again
+      const index = words.indexOf(otherWord);
+      if (index > -1) {
+        words.splice(index, 1);
+      }
     }
   }
 
   return otherOptions;
 }
-
 
 function displayQuestion(word) {
   document.getElementById('question').textContent = word.word;
@@ -135,6 +162,8 @@ function handleOptionClick(optionElement) {
 
 function handleSubmission(words) {
   const selectedOption = document.querySelector('.option.selected');
+  document.getElementById('action-button').textContent = 'Next';
+  document.getElementById('action-button').classList.add('next');
   if (!selectedOption) {
     alert('Please select an option before submitting.');
     return;

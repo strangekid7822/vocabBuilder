@@ -1,20 +1,28 @@
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
+  text-align: center; /* This will center the content */
 }
 
 th {
   background-color: #333;
   color: #fff;
   font-weight: bold;
+  cursor: default; /* This will prevent the cursor from changing on hover */
+}
+
+.info-cell {
+  cursor: default;
 }
 
 tr:nth-child(even) {
@@ -26,6 +34,7 @@ tr:hover {
 }
 
 button {
+  width: 60px;
   padding: 5px 10px;
   background-color: #333;
   color: #fff;
@@ -37,4 +46,24 @@ button {
 
 button:hover {
   background-color: #ff9900;
+}
+
+button.edit-mode {
+  background-color: #ff9900;
+  color: white;
+}
+
+.editing .info-cell {
+  cursor: text;
+  background-color: #ff9900;
+  color: white;
+}
+
+.info-cell {
+  background-color: transparent;
+  color: inherit;
+}
+
+.delete-button:hover {
+  background-color: #D32F2F;
 }
