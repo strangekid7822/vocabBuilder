@@ -44,7 +44,7 @@ async function fetchWords() {
 function startNewRound(words) {
   const actionButton = document.getElementById('action-button');
   actionButton.textContent = 'Submit';
-  actionButton.disabled = true;
+  actionButton.classList.add('disabled');
   
   const [questionWord, correctOption, otherOptions] = generateQuestion(words);
   displayQuestion(questionWord);
@@ -130,7 +130,7 @@ function handleOptionClick(optionElement) {
     option.classList.remove('selected');
   });
   optionElement.classList.add('selected');
-  document.getElementById('action-button').disabled = false;
+  document.getElementById('action-button').classList.remove('disabled');
 }
 
 function handleSubmission(words) {
