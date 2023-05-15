@@ -64,6 +64,11 @@ button[type="submit"]:hover {
   background-color: #ff9900;
 }
 
+button[type="submit"]:active {
+  transform: scale(1.02);
+  transition: transform 0.1s;
+}
+
 nav {
   display: flex;
   justify-content: space-around;

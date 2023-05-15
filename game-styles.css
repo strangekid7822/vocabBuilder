@@ -88,3 +88,8 @@
   background-color: #ff9900;
   border-color: #ff9900;
 }
+
+#action-button:active {
+  transform: scale(1.02);
+  transition: transform 0.2s;
+}
