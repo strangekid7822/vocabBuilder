@@ -58,6 +58,8 @@ button[type="submit"] {
   cursor: pointer;
   font-size: 1rem;
   margin-top: 10px;
+  transition: transform 0.1s;
+  -webkit-transition: -webkit-transform 0.1s;
 }
 
 button[type="submit"]:hover {
@@ -65,10 +67,8 @@ button[type="submit"]:hover {
 }
 
 button[type="submit"]:active {
-  transform: scale(1.02);
   -webkit-transform: scale(1.02) translateZ(0);
-  transition: transform 0.1s;
-  -webkit-transition: -webkit-transform 0.1s;
+  transform: scale(1.02);
 }
 
 nav {
