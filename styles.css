@@ -17,6 +17,7 @@ body {
 }
 
 .container {
+  min-height: 29rem;
   display: flex;
   flex-direction: column;
   gap: 20px;
