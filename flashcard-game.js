@@ -58,6 +58,8 @@ function startNewRound(words) {
     option.disabled = false;
     option.classList.remove('selected', 'correct', 'incorrect');
   });
+
+  document.getElementById('word-info').innerHTML = '';
 }
 
 function generateQuestion(words) {
@@ -179,6 +181,16 @@ function handleSubmission(words) {
     }
   });
 
+  const questionWord = document.getElementById('question').textContent;
+  const word = words.find(word => word.word === questionWord);
+
+  const wordInfo = document.getElementById('word-info');
+  wordInfo.innerHTML = `
+    <strong>Meaning:</strong> ${word.meaning} <br>
+    <strong>Synonyms:</strong> ${word.synonyms ? word.synonyms.join(', ') : 'None'} <br>
+    <strong>Chinese Translation:</strong> ${word.chinese_translation}
+  `;
+  
   document.getElementById('action-button').textContent = 'Next';
 }
 
