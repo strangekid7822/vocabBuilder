@@ -59,7 +59,9 @@ function startNewRound(words) {
     option.classList.remove('selected', 'correct', 'incorrect');
   });
 
-  document.getElementById('word-info').innerHTML = '';
+  const wordInfo = document.getElementById('word-info');
+  wordInfo.innerHTML = '';
+  wordInfo.style.display = 'none';
 }
 
 function generateQuestion(words) {
@@ -166,6 +168,7 @@ function handleSubmission(words) {
   const selectedOption = document.querySelector('.option.selected');
   document.getElementById('action-button').textContent = 'Next';
   document.getElementById('action-button').classList.add('next');
+  
   if (!selectedOption) {
     alert('Please select an option before submitting.');
     return;
@@ -185,14 +188,24 @@ function handleSubmission(words) {
   const word = words.find(word => word.word === questionWord);
 
   const wordInfo = document.getElementById('word-info');
-  wordInfo.innerHTML = `
-    <strong>Meaning:</strong> ${word.meaning} <br>
-    <strong>Synonyms:</strong> ${word.synonyms ? word.synonyms.join(', ') : 'None'} <br>
-    <strong>Chinese Translation:</strong> ${word.chinese_translation}
-  `;
+  let htmlContent = '';
+
+  if(word.meaning) {
+    htmlContent += `<strong>Meaning:</strong> ${word.meaning} <br>`;
+  }
+  if(word.synonyms && Array.isArray(word.synonyms)) {
+    htmlContent += `<strong>Synonyms:</strong> ${word.synonyms.join(', ')} <br>`;
+  }
+  if(word.chinese_translation) {
+    htmlContent += `<strong>Chinese Translation:</strong> ${word.chinese_translation} <br>`;
+  }
+
+  wordInfo.innerHTML = htmlContent;
+  wordInfo.style.display = 'block';
   
   document.getElementById('action-button').textContent = 'Next';
 }
+
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
