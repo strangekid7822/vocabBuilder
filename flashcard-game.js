@@ -195,6 +195,8 @@ function handleSubmission(words) {
   }
   if(word.synonyms && Array.isArray(word.synonyms)) {
     htmlContent += `<strong>Synonyms:</strong> ${word.synonyms.join(', ')} <br>`;
+  } else if (word.synonyms && typeof word.synonyms === 'string') {
+    htmlContent += `<strong>Synonyms:</strong> ${word.synonyms} <br>`;
   }
   if(word.chinese_translation) {
     htmlContent += `<strong>Chinese Translation:</strong> ${word.chinese_translation} <br>`;
@@ -205,6 +207,7 @@ function handleSubmission(words) {
   
   document.getElementById('action-button').textContent = 'Next';
 }
+
 
 
 function shuffleArray(array) {
