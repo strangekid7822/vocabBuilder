@@ -199,7 +199,7 @@ function handleSubmission(words) {
     htmlContent += `<strong>Synonyms:</strong> ${word.synonyms} <br>`;
   }
   if(word.chinese_translation) {
-    htmlContent += `<strong>Chinese Translation:</strong> ${word.chinese_translation} <br>`;
+    htmlContent += `<strong>Chinese:</strong> ${word.chinese_translation} <br>`;
   }
 
   wordInfo.innerHTML = htmlContent;
