@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // To make the cursor focus on the word input field when the page loads
 window.onload = function() {
-  document.getElementById('word').focus();
+  const wordElement = document.getElementById('word');
+  if (wordElement) {
+    wordElement.focus();
+  }
 };
 
 async function addWord(event) {
