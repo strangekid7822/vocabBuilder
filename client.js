@@ -74,6 +74,9 @@ async function addWord(event) {
     document.getElementById('synonyms').value = '';
     document.getElementById('chinese-translation').value = '';
 
+    // Set focus back to word input
+    document.getElementById('word').focus();
+
   } catch (error) {
     console.error('Failed to add word:', error);
   }
