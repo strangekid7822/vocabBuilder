@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flashcard Game</title>
+  <title>Spelling Game</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="game-styles.css">
+  <link rel="stylesheet" href="spelling-game-styles.css">
 </head>
 <body>
   <div class="container">
@@ -15,13 +15,23 @@
       <a href="spelling-game.html">Spelling</a>
       <a href="word-list.html" class="hide-on-mobile">Word List</a>
     </nav>
-    <h1 id="question"></h1>
-    <div id="options"></div>
-    <button id="action-button">Submit</button>
+    <h1 id="question">Spelling Game</h1>
+    <div id="game-container">
+      <div id="word-info">
+          <p id="word-meaning"></p>
+          <p id="word-synonym"></p>
+          <p id="word-chinese"></p>
+      </div>
+      <div id="answer-area">
+          <input type="text" id="word-input" placeholder="Type your spelling here">
+          <button id="submit-answer">Submit</button>
+          <button id="next-word">Next</button>
+      </div>
+    </div>
     <p id="not-enough-words-message">To play the game, please save more than 6 words.</p>
   </div>
   <div id="word-info"></div>
-
-  <script src="flashcard-game.js"></script>
+  
+  <script src="spelling-game.js"></script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+#game-container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#word-info {
+    margin-bottom: 20px;
+}
+
+#word-input {
+    margin-bottom: 10px;
+}
+
+button {
+    margin: 5px;
+}
