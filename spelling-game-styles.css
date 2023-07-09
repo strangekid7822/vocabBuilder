@@ -1,17 +1,85 @@
-#game-container {
-    width: 80%;
-    margin: 0 auto;
-    text-align: center;
+#answer-area {
+display: flex;
+flex-direction: column;
+gap: 10px;
 }
 
 #word-info {
-    margin-bottom: 20px;
+text-align: center;
+color: #000; /* black */
+}
+
+#correct-answer {
+text-align: center;
+color: #aaa; /* light grey */
+}
+
+#correct-answer .answer {
+color: lightred;
+font-weight: bold;
 }
 
 #word-input {
-    margin-bottom: 10px;
+padding: 10px;
+border: 1px solid #ddd; /* add border */
+border-radius: 5px;
+font-size: 1rem;
+outline: none;
+transition: background-color 0.5s, border-color 0.5s;
+text-align: center;
 }
 
-button {
-    margin: 5px;
+#word-input:hover {
+border-color: #999; /* add hover effect */
+}
+
+#word-input.correct,
+#word-input.incorrect {
+color: #fff; /* white */
+}
+
+#word-input.correct {
+background-color: lightgreen;
+}
+
+#word-input.incorrect {
+background-color: lightpink;
+}
+
+input[disabled] {
+color: white;
+}
+
+input.no-hover:hover {
+border-color: #ddd; 
+/* same color as the normal border */
+}  
+
+#submit-answer {
+padding: 10px;
+border: none;
+border-radius: 5px;
+font-size: 1rem;
+cursor: pointer;
+background-color: #333;
+color: #fff;
+transition: background-color 0.5s;
+}
+
+#submit-answer:hover {
+background-color: #ff9900;
+}
+
+#submit-answer.next {
+background-color: #ff9900;
+}
+
+#correct-answer {
+margin-top: 20px;
+font-size: 1.1rem; /* slightly smaller than default */
+}
+
+#correct-answer .answer {
+color: lightred;
+font-weight: bold;
 }
