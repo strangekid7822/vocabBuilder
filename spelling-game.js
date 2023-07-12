@@ -39,16 +39,15 @@ submitButton.addEventListener('click', function(e) {
   if (submitButton.textContent === 'Submit') {
     if (inputField.value === '') {
       alert('You have to input the answer before submitting.');
+      return;  // stop executing the rest of the function
     } else if (inputField.value === currentWord.word) {
       // Correct answer
       inputField.style.backgroundColor = 'lightgreen';
       displayCorrectAnswer();
-      inputField.classList.add('no-hover'); // Add the no-hover class when the input is disabled
     } else {
       // Incorrect answer
       inputField.style.backgroundColor = 'lightpink';
       displayIncorrectAnswer();
-      inputField.classList.add('no-hover'); // Add the no-hover class when the input is disabled
     }
     inputField.disabled = true;
     submitButton.textContent = 'Next';
@@ -57,12 +56,12 @@ submitButton.addEventListener('click', function(e) {
     inputField.value = '';
     inputField.style.backgroundColor = '';
     inputField.disabled = false;
-    inputField.classList.remove('no-hover'); // Remove the no-hover class when the input is enabled
     correctAnswerDiv.innerHTML = '';  // clear the correct answer div
     submitButton.textContent = 'Submit';
     pickRandomWord();
   }
 });
+
 
 function displayCorrectAnswer() {
   correctAnswerDiv.innerHTML = "<span style='color: gray;'>Correct answer!</span>";
@@ -71,3 +70,9 @@ function displayCorrectAnswer() {
 function displayIncorrectAnswer() {
   correctAnswerDiv.innerHTML = "<span style='color: gray;'>Incorrect. The correct answer was: </span><span style='color: red; font-weight: bold;'>" + currentWord.word + "</span>";
 }
+
+inputField.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    submitButton.click();
+  }
+});
