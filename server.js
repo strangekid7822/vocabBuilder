@@ -1,6 +1,8 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const cors = require('cors');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 console.log('Starting server.js...');
 
@@ -8,6 +10,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Initialize Passport
+app.use(passport.initialize());
+
+// MongoDB database object
 let db;
 
 // Connect to MongoDB
@@ -17,9 +23,13 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true }, (
   db = client.db('vocabBuilder');
 });
 
-// User Model (New Code)
-// MongoDB will automatically create the 'users' collection if it doesn't exist
-const userCollection = db.collection('users');
+// Passport Local Strategy
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    // TODO: Implement user authentication logic here
+    return done(null, false, { message: 'Incorrect username or password.' });
+  }
+));
 
 // POST route for adding words
 app.post('/api/words', (req, res) => {
@@ -46,7 +56,32 @@ app.get('/api/words', (req, res) => {
   });
 });
 
-// Existing code for PUT and DELETE routes remain unchanged
+// PUT route for updating words
+app.put('/api/words/:id', (req, res) => {
+  const { id } = req.params;
+  const { word, meaning, synonyms, chinese_translation } = req.body;
+  const collection = db.collection('words');
+  collection.updateOne({ _id: id }, { $set: { word, meaning, synonyms, chinese_translation } }, (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ changes: result.modifiedCount });
+  });
+});
+
+// DELETE route for deleting words
+app.delete('/api/words/:id', (req, res) => {
+  const { id } = req.params;
+  const collection = db.collection('words');
+  collection.deleteOne({ _id: id }, (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ changes: result.deletedCount });
+  });
+});
 
 app.use(express.static(__dirname));
 
