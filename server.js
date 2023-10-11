@@ -14,8 +14,12 @@ let db;
 
 // Connect to MongoDB
 MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true }, (err, client) => {
-  if (err) return console.error(err);
-  console.log('Connected to MongoDB');
+  if (err) {
+    console.error("Failed to connect to MongoDB:", err);
+    return;
+  } else {
+    console.log('Successfully connected to MongoDB');
+  }
   // Initialize the database object
   db = client.db('vocabBuilder');
 });
@@ -23,7 +27,6 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true }, (
 // POST route for adding words
 app.post('/api/words', (req, res) => {
   const { word, meaning, synonyms, chinese_translation } = req.body;
-  // Use MongoDB collection instead of SQLite
   const collection = db.collection('words');
   collection.insertOne({ word, meaning, synonyms, chinese_translation }, (err, result) => {
     if (err) {
@@ -36,7 +39,6 @@ app.post('/api/words', (req, res) => {
 
 // GET route for fetching words
 app.get('/api/words', (req, res) => {
-  // Use MongoDB collection instead of SQLite
   const collection = db.collection('words');
   collection.find({}).toArray((err, rows) => {
     if (err) {
@@ -51,7 +53,6 @@ app.get('/api/words', (req, res) => {
 app.put('/api/words/:id', (req, res) => {
   const { id } = req.params;
   const { word, meaning, synonyms, chinese_translation } = req.body;
-  // Use MongoDB collection instead of SQLite
   const collection = db.collection('words');
   collection.updateOne({ _id: id }, { $set: { word, meaning, synonyms, chinese_translation } }, (err, result) => {
     if (err) {
@@ -65,7 +66,6 @@ app.put('/api/words/:id', (req, res) => {
 // DELETE route for deleting words
 app.delete('/api/words/:id', (req, res) => {
   const { id } = req.params;
-  // Use MongoDB collection instead of SQLite
   const collection = db.collection('words');
   collection.deleteOne({ _id: id }, (err, result) => {
     if (err) {
