@@ -29,6 +29,35 @@
             
             <button type="submit">Add Word</button>
         </form>
+
+        <!-- New Section for User Login and Registration -->
+        <div class="user-section">
+            <h2>User Login</h2>
+            <form id="login-form">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Login</button>
+            </form>
+            
+            <h2>User Registration</h2>
+            <form id="register-form">
+                <label for="new-username">Username</label>
+                <input type="text" id="new-username" name="new-username" required>
+                
+                <label for="new-password">Password</label>
+                <input type="password" id="new-password" name="new-password" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        <!-- End of New Section -->
     </div>    
     <script src="client.js"></script>
 </body>

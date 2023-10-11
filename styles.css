@@ -91,6 +91,17 @@ nav a:hover {
   color: #ff9900;
 }
 
+.user-section {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.user-section h2 {
+  margin-bottom: 10px;
+}
+
 /* Media query for mobile devices */
 @media (max-width: 768px) {
   .hide-on-mobile {
