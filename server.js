@@ -10,32 +10,35 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Initialize Passport
-app.use(passport.initialize());
-
-// MongoDB database object
 let db;
 
-// Connect to MongoDB
 MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true }, (err, client) => {
   if (err) return console.error(err);
   console.log('Connected to MongoDB');
   db = client.db('vocabBuilder');
 });
 
-// Passport Local Strategy
+// Initialize Passport
+app.use(passport.initialize());
+
+// Passport local strategy for user authentication
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    // TODO: Implement user authentication logic here
-    return done(null, false, { message: 'Incorrect username or password.' });
+    const collection = db.collection('users');
+    collection.findOne({ username: username }, function(err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (user.password !== password) { return done(null, false); }
+      return done(null, user);
+    });
   }
 ));
 
-// POST route for adding words
-app.post('/api/words', (req, res) => {
-  const { word, meaning, synonyms, chinese_translation } = req.body;
-  const collection = db.collection('words');
-  collection.insertOne({ word, meaning, synonyms, chinese_translation }, (err, result) => {
+// User registration route
+app.post('/api/register', (req, res) => {
+  const { username, password, email } = req.body;
+  const collection = db.collection('users');
+  collection.insertOne({ username, password, email }, (err, result) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -44,43 +47,15 @@ app.post('/api/words', (req, res) => {
   });
 });
 
-// GET route for fetching words
-app.get('/api/words', (req, res) => {
-  const collection = db.collection('words');
-  collection.find({}).toArray((err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json(rows);
-  });
+// User login route
+app.post('/api/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect('/');
 });
 
-// PUT route for updating words
-app.put('/api/words/:id', (req, res) => {
-  const { id } = req.params;
-  const { word, meaning, synonyms, chinese_translation } = req.body;
-  const collection = db.collection('words');
-  collection.updateOne({ _id: id }, { $set: { word, meaning, synonyms, chinese_translation } }, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json({ changes: result.modifiedCount });
-  });
-});
-
-// DELETE route for deleting words
-app.delete('/api/words/:id', (req, res) => {
-  const { id } = req.params;
-  const collection = db.collection('words');
-  collection.deleteOne({ _id: id }, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json({ changes: result.deletedCount });
-  });
+// User logout route
+app.get('/api/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
 
 app.use(express.static(__dirname));
