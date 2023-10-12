@@ -1,3 +1,4 @@
+// Event listener for when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
   const wordForm = document.getElementById('word-form');
   if (wordForm) {
@@ -25,7 +26,7 @@ window.onload = function() {
   }
 };
 
-// Existing function to add word
+// Existing function to add a word
 async function addWord(event) {
   event.preventDefault();
 
@@ -36,26 +37,58 @@ async function addWord(event) {
     chinese_translation: document.getElementById('chinese-translation').value,
   };
 
-  // ... (existing code for adding word)
+  // Existing code for adding word
+  try {
+    const response = await fetch('/api/words', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(wordData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Word added with ID:', result.id);
+    
+    // Clear input fields
+    document.getElementById('word').value = '';
+    document.getElementById('meaning').value = '';
+    document.getElementById('synonyms').value = '';
+    document.getElementById('chinese-translation').value = '';
+
+    // Set focus back to word input
+    document.getElementById('word').focus();
+
+  } catch (error) {
+    console.error('Failed to add word:', error);
+  }
 }
 
 // New function to login user
 async function loginUser(event) {
   event.preventDefault();
+  
   const userData = {
     username: document.getElementById('username').value,
     password: document.getElementById('password').value,
   };
-  // Here, you would send the userData to the server for authentication
+
+  // Code to send userData to the server for authentication will go here
 }
 
 // New function to register user
 async function registerUser(event) {
   event.preventDefault();
+  
   const newUserData = {
     username: document.getElementById('new-username').value,
     password: document.getElementById('new-password').value,
     email: document.getElementById('email').value,
   };
-  // Here, you would send the newUserData to the server for registration
+
+  // Code to send newUserData to the server for registration will go here
 }
