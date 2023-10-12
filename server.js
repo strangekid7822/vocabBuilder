@@ -3,12 +3,20 @@ const MongoClient = require('mongodb').MongoClient;
 const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');  // New: Import express-session
 
 console.log('Starting server.js...');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// New: Initialize session management
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+}));
 
 let db;
 
@@ -18,8 +26,9 @@ MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true }, (
   db = client.db('vocabBuilder');
 });
 
-// Initialize Passport
+// Initialize Passport and session
 app.use(passport.initialize());
+app.use(passport.session());  // New: Enable session support in Passport
 
 // Passport local strategy for user authentication
 passport.use(new LocalStrategy(
@@ -33,6 +42,19 @@ passport.use(new LocalStrategy(
     });
   }
 ));
+
+// New: Serialize user information into session
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+// New: Deserialize user information from session
+passport.deserializeUser(function(id, done) {
+  const collection = db.collection('users');
+  collection.findOne({ _id: id }, function(err, user) {
+    done(err, user);
+  });
+});
 
 // User registration route
 app.post('/api/register', (req, res) => {
