@@ -15,13 +15,17 @@ const db = new sqlite3.Database('./words.db', (err) => {
   console.log('Connected to the SQLite database.');
 });
 
+// Modified the table creation query to include a 'category' column
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS words (id INTEGER PRIMARY KEY, word TEXT NOT NULL, meaning TEXT, synonyms TEXT, chinese_translation TEXT);');
+  db.run('CREATE TABLE IF NOT EXISTS words (id INTEGER PRIMARY KEY, word TEXT NOT NULL, meaning TEXT, synonyms TEXT, chinese_translation TEXT, category TEXT DEFAULT "Wolfe自用");');
 });
 
 app.post('/api/words', (req, res) => {
-  const { word, meaning, synonyms, chinese_translation } = req.body;
-  db.run('INSERT INTO words (word, meaning, synonyms, chinese_translation) VALUES (?, ?, ?, ?)', [word, meaning, synonyms, chinese_translation], function (err) {
+  // Added 'category' to the destructured variables from req.body
+  const { word, meaning, synonyms, chinese_translation, category = "Wolfe自用" } = req.body;
+
+  // Modified the INSERT query to include 'category'
+  db.run('INSERT INTO words (word, meaning, synonyms, chinese_translation, category) VALUES (?, ?, ?, ?, ?)', [word, meaning, synonyms, chinese_translation, category], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -30,6 +34,7 @@ app.post('/api/words', (req, res) => {
   });
 });
 
+// No changes made below this line
 app.get('/api/words', (req, res) => {
   db.all('SELECT * FROM words ORDER BY word ASC', [], (err, rows) => {
     if (err) {
