@@ -16,26 +16,31 @@ window.onload = function() {
 async function addWord(event) {
   event.preventDefault();
 
+  // New Addition: Retrieve the selected category from the dropdown
+  const selectedCategory = document.getElementById('category').value;
+  // End of New Addition
+
   const wordData = {
     word: document.getElementById('word').value,
     meaning: document.getElementById('meaning').value,
     synonyms: document.getElementById('synonyms').value,
     chinese_translation: document.getElementById('chinese-translation').value,
+    // New Addition: Include the selected category in the wordData object
+    category: selectedCategory
+    // End of New Addition
   };
 
-  // Check if the word is empty
+  // The rest of the code remains the same as before
   if (!wordData.word || wordData.word.trim() === '') {
     alert('The word must not be empty.');
     return;
   }
 
-  // Check if at least one of the fields: 'Meaning', 'Synonyms', 'Chinese translation' is not empty
   if (!wordData.meaning && !wordData.synonyms && !wordData.chinese_translation) {
     alert('At least one of the fields: "Meaning", "Synonyms", or "Chinese translation" must not be empty.');
     return;
   }
 
-  // Check if the word already exists
   try {
     const wordsResponse = await fetch('/api/words');
     if (!wordsResponse.ok) {

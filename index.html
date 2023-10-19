@@ -14,19 +14,28 @@
             <a href="spelling-game.html">Spelling</a>
             <a href="word-list.html" class="hide-on-mobile">Word List</a>
         </nav>
+        
+        <!-- New Addition: Dropdown for category selection -->
+        <label for="category">Category</label>
+        <select id="category">
+            <option value="Wolfe自用">Wolfe自用</option>
+            <option value="高中词汇">高中词汇</option>
+            <option value="初三词汇">初三词汇</option>
+            <option value="初二词汇">初二词汇</option>
+            <option value="初一词汇">初一词汇</option>
+        </select>
+        <!-- End of New Addition -->
+        
         <form id="word-form">
+            <!-- The rest of the form remains the same as before -->
             <label for="word">Word</label>
             <input type="text" spellcheck="true" id="word" name="word" required>
-            
             <label for="meaning">Meaning</label>
             <input type="text" spellcheck="true" id="meaning" name="meaning">
-            
             <label for="synonyms">Synonyms</label>
             <input type="text" spellcheck="true" id="synonyms" name="synonyms">
-            
             <label for="chinese-translation">Chinese</label>
             <input type="text" id="chinese-translation" name="chinese-translation">
-            
             <button type="submit">Add Word</button>
         </form>
     </div>    
