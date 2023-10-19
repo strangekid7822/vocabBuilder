@@ -15,16 +15,14 @@ const db = new sqlite3.Database('./words.db', (err) => {
   console.log('Connected to the SQLite database.');
 });
 
-// Modified the table creation query to include a 'category' column
+// No changes here
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS words (id INTEGER PRIMARY KEY, word TEXT NOT NULL, meaning TEXT, synonyms TEXT, chinese_translation TEXT, category TEXT DEFAULT "Wolfe自用");');
 });
 
+// No changes here
 app.post('/api/words', (req, res) => {
-  // Added 'category' to the destructured variables from req.body
   const { word, meaning, synonyms, chinese_translation, category = "Wolfe自用" } = req.body;
-
-  // Modified the INSERT query to include 'category'
   db.run('INSERT INTO words (word, meaning, synonyms, chinese_translation, category) VALUES (?, ?, ?, ?, ?)', [word, meaning, synonyms, chinese_translation, category], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -34,7 +32,19 @@ app.post('/api/words', (req, res) => {
   });
 });
 
-// No changes made below this line
+// New "button" to get words by category
+app.get('/api/words/by-category/:category', (req, res) => {
+  const { category } = req.params;
+  db.all('SELECT * FROM words WHERE category = ? ORDER BY word ASC', [category], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+// No changes here
 app.get('/api/words', (req, res) => {
   db.all('SELECT * FROM words ORDER BY word ASC', [], (err, rows) => {
     if (err) {
@@ -45,10 +55,10 @@ app.get('/api/words', (req, res) => {
   });
 });
 
+// No changes here
 app.put('/api/words/:id', (req, res) => {
   const { id } = req.params;
   const { word, meaning, synonyms, chinese_translation } = req.body;
-
   db.run('UPDATE words SET word = ?, meaning = ?, synonyms = ?, chinese_translation = ? WHERE id = ?', [word, meaning, synonyms, chinese_translation, id], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -58,9 +68,9 @@ app.put('/api/words/:id', (req, res) => {
   });
 });
 
+// No changes here
 app.delete('/api/words/:id', (req, res) => {
   const { id } = req.params;
-
   db.run('DELETE FROM words WHERE id = ?', [id], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
