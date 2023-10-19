@@ -1,7 +1,24 @@
+// Existing variables
 let lastNQuestionWords = [];
 const N = 3; // Change this to the number of rounds you want to remember.
 
+// Added variable to store selected category
+let selectedCategory = "全部单词"; // Default is "All Categories" in Chinese
+
+// Existing DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', () => {
+  // Added event listener for category dropdown
+  const categorySelect = document.getElementById('category-select');
+  categorySelect.addEventListener('change', event => {
+    selectedCategory = event.target.value;
+    startGame(); // Start the game based on the selected category
+  });
+
+  startGame(); // Initial game start
+});
+
+// Added function to start the game
+function startGame() {
   fetchWords().then(words => {
     if (words.length > 5) {
       document.getElementById('not-enough-words-message').style.display = 'none';
@@ -29,15 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('action-button').style.display = 'none';
     }
   });
-});
+}
 
+// Modified fetchWords function to filter by category
 async function fetchWords() {
   try {
     const response = await fetch('/api/words');
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
-    return await response.json();
+    const allWords = await response.json();
+    // Filter words based on selected category
+    const filteredWords = selectedCategory === "全部单词" ? allWords : allWords.filter(word => word.category === selectedCategory);
+    return filteredWords;
   } catch (error) {
     console.error('Failed to fetch words:', error);
     return [];
